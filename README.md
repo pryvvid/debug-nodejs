@@ -7,7 +7,7 @@ Example:
 ```
 PASSWORD=123456
 ```
-![Example image](https://imgur.com/ldnA02g)
+![Example image](https://i.imgur.com/ldnA02g.jpg)
 
 ## Installation
 
