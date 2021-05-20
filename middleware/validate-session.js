@@ -1,11 +1,12 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const checkAuthorization = require('../utils/utils')
 
 module.exports = function (req, res, next) {
     if (req.method == 'OPTIONS') {
         next();   // allowing options as a method for request
     } else {
-        const sessionToken = req.headers['authorization'] ? req.headers['authorization'].split(" ")[1] : undefined;
+        const sessionToken =  checkAuthorization(req.headers.authorization);
         console.log(sessionToken);
         if (!sessionToken) return res.status(403).send({ auth: false, message: "No token provided." });
         else {
