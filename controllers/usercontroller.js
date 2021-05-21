@@ -12,40 +12,41 @@ router.post('/signup', (req, res) => {
         email: req.body.user.email,
     })
         .then(
-            function signupSuccess(user) {
+            (user) => {
                 const token = jwt.sign({ id: user.id }, 'lets_play_sum_games_man', { expiresIn: 60 * 60 * 24 });
                 res.status(201).json({
                     user: user,
                     token: token
                 });
-            },
-
-            function signupFail(err) {
-                res.status(500).send(err.message);
-            }
-        );
+            }    
+        ).catch((err) => {
+            res.status(500).send(err.message);
+        }) 
 });
 
 router.post('/signin', (req, res) => {
-    User.findOne({ where: { username: req.body.user.username } }).then(user => {
-        if (user) {
-            bcrypt.compare(req.body.user.password, user.passwordHash, function (err, matches) {
-                if (matches) {
-                    const token = jwt.sign({ id: user.id }, 'lets_play_sum_games_man', { expiresIn: 60 * 60 * 24 });
-                    res.status(200).json({
-                        user: user,
-                        message: "Successfully authenticated.",
-                        sessionToken: token
-                    });
-                } else {
-                    res.status(401).send({ error: "Passwords do not match." });
-                }
-            });
-        } else {
-            res.status(404).send({ error: "User not found." });
-        }
+    User.findOne({ where: { username: req.body.user.username } })
+        .then(user => {
+            if (user) {
+                bcrypt.compare(req.body.user.password, user.passwordHash, (err, matches) => {
+                    if (matches) {
+                        const token = jwt.sign({ id: user.id }, 'lets_play_sum_games_man', { expiresIn: 60 * 60 * 24 });
+                        res.status(200).json({
+                            user: user,
+                            message: "Successfully authenticated.",
+                            sessionToken: token
+                        });
+                    } else {
+                        res.status(401).send({ error: "Passwords do not match." });
+                    }
+                });
+            } else {
+                res.status(404).send({ error: "User not found." });
+            }
 
-    });
+        }).catch((err) => {
+            res.status(500).send(err.message);
+        });
 });
 
 module.exports = router;
